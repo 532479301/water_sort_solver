@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Hello OpenCV.js</title>
+	<style type="text/css">
+		canvas {
+			border: 1px solid black;
+		}
+
+		.disable-dbl-tap-zoom {
+			touch-action: manipulation;
+		}
+	</style>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+</head>
+<body>
+<h2>Hello OpenCV.js</h2>
+<p id="status">OpenCV.js is loading...</p>
+<div>
+    <table cellpadding="0" cellspacing="0" width="0" border="0">
+    <tbody><tr>
+        <td>
+            <img id="imageSrc" alt="No Image"/>
+        </td>
+        <td>
+            <canvas id="canvasOutput"  class="disable-dbl-tap-zoom"></canvas>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="caption">imageSrc <input type="file" id="fileInput" name="file" accept="image/*"></div>
+        </td>
+		<td align="center">
+			<button type="button" class="btn btn-primary btn-sm disable-dbl-tap-zoom" style="font-size:20px" id="step" disabled>
+				<i class="fa fa-caret-right"></i> Step
+			</button>
+			<button type="button" class="btn btn-warning btn-sm disable-dbl-tap-zoom" style="font-size:20px" id="reset" disabled>
+				<i class="fa fa-undo"></i> Reset
+			</button>
+			<span id="counter"></span>
+			<p></p>
+		</td>
+    </tr>
+    </tbody></table>
+</div>
+<div>
+	<canvas id="mask"></canvas>
+</div>
+
+<script src="bottle.js" type="text/javascript"></script>
+<script type="text/javascript">var solver = new Object();</script>
+<script src="mitidalu.js" type="text/javascript"></script>
+<script src="graphics.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+	let imgElement = document.getElementById('imageSrc');
+	imgElement.style.display = "none";
+//imgElement.width = window.innerWidth / 2 - 20;
+
+	let inputElement = document.getElementById('fileInput');
+	inputElement.addEventListener('change', (e) => {
+		imgElement.width = 1080;
+		imgElement.src = URL.createObjectURL(e.target.files[0]);
+	}, false);
+
+	function ShowStatus(string) {
+		document.getElementById('status').innerHTML = string;
+	}
+
+    var movingProblem = new Object();
+	function onStepButtonPress() {
+		let pure = pureMethod[pureIndex];
+		movingProblem.bottles[pure.from].pureTo(movingProblem.bottles[pure.to]);
+		gameDisplay.show(movingProblem);
+        pureIndex++;
+		handleButtonStatus();
+	}
+
+	function onResetButtonPress() {
+		if (pureMethod.length > 0) {
+			movingProblem = clone(orgProblem);
+			pureIndex = 0;
+			gameDisplay.show(movingProblem);
+		}
+		else {
+			gameDisplay.show(orgProblem);
+        }
+        handleButtonStatus();
+	}
+
+    function handleButtonStatus() {
+		// Default to disabled, then enable.
+        stepButton.disabled = true;
+        resetButton.disabled = true;
+
+        if (pureMethod.length > 0) {
+			if (pureIndex < pureMethod.length) {
+				stepButton.disabled = false;
+				if (pureIndex > 0) {
+					resetButton.disabled = false;
+				}
+			}
+			else {
+                resetButton.disabled = false;
+            }
+
+            const index = pureIndex;
+            const numSolutionSteps = pureMethod.length.toString();
+            counter.innerHTML = ` ${index}/${numSolutionSteps}`;
+        } else {
+            counter.innerHTML = '问题无解';
+        }
+    }
+
+	let stepButton = document.getElementById('step');
+	stepButton.addEventListener('click', onStepButtonPress);
+    let resetButton = document.getElementById('reset');
+	resetButton.addEventListener('click', onResetButtonPress);
+	let counter = document.querySelector('#counter');
+
+	const gameDisplay = new GameDisplay('canvasOutput');
+	var orgProblem = new Object();
+	var pureMethod = new Array();
+	var pureIndex = 0;
+
+	imgElement.onload = function () {
+		let src = cv.imread(imgElement);
+		let problem = solver.init(src);
+		cv.imshow('canvasOutput', src);
+		src.delete();
+
+		gameDisplay.init(problem);
+		gameDisplay.show(problem);
+		imgElement.width = gameDisplay.canvasSize[0];
+
+		// 检查
+		if (!CheckProblem(problem)) {
+			ShowStatus('<b>瓶子组合不符合要求，无法解题！</b>');
+		}
+		else {
+			ShowStatus('瓶子组合通过检查，可以开始解题。');
+			orgProblem = clone(problem);
+
+			// 解题
+			let unknowns = GetUnknowns(problem);
+			if (unknowns == 0) {
+				var pure = Solve(problem);
+
+				// 打印结果
+				if (pure == null) {
+					ShowStatus('找不到解决方案，问题无解!');
+					pureMethod = new Array();
+                    onResetButtonPress();
+				}
+				else {
+					pureMethod = clone(pure);
+					onResetButtonPress();
+				}
+			}
+		}
+	}
+
+	imgElement.onload1 = function () {
+		let src = cv.imread(imgElement);
+		let dst = new cv.Mat();
+
+		let gray = new cv.Mat();
+		cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+		let low = new cv.Mat(gray.rows, gray.cols, gray.type(), [75, 0, 0, 0]);
+		let high = new cv.Mat(gray.rows, gray.cols, gray.type(), [255, 0, 0, 0]);
+		cv.inRange(gray, low, high, dst);
+		gray.delete(); low.delete(); high.delete();
+
+		let contours = new cv.MatVector();
+		let hierarchy = new cv.Mat();
+		// You can try more different parameters
+		cv.findContours(dst, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+		// draw bottles
+		let rectangleColor = new cv.Scalar(255, 0, 0, 255);
+		let bottleLines = new Array();
+		for (let i = 0; i < contours.size(); ++i) {
+			let rect = cv.boundingRect(contours.get(i));
+			let radio = parseFloat(rect.height) / parseFloat(rect.width);
+			if (radio > 2.5 && radio < 4.0 && rect.width > dst.cols * 0.084) {
+				let point1 = new cv.Point(rect.x, rect.y);
+				let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+				cv.rectangle(src, point1, point2, rectangleColor, 2, cv.LINE_8);
+
+				inserted = false;
+				for (let key in bottleLines) {
+					if (bottleLines[key].append(rect)) {
+						inserted = true;
+						break;
+					}
+				}
+				if (!inserted) {
+					let bl = new BottleLine();
+					bl.append(rect);
+					bottleLines.push(bl);
+				}
+			}
+		}
+		bottleLines.sort(function (a, b) {
+			return a.possible_y - b.possible_y;
+		});
+
+		for (let key in bottleLines) {
+			for (let bottlekey in bottleLines[key].bottles) {
+
+			}
+		}
+		cv.imshow('canvasOutput', src);
+		src.delete(); dst.delete(); contours.delete(); hierarchy.delete();
+	};
+
+	function onOpenCvReady() { // eslint-disable-line no-unused-vars
+		document.getElementById('status').innerHTML = '<b>OpenCV.js is ready</b>.' +
+			'You can upload an image.<br>' +
+			'The <b>imageSrc</b> is a &lt;img&gt; element used as cv.Mat input. ' +
+			'The <b>canvasOutput</b> is a &lt;canvas&gt; element used as cv.Mat output.';
+	}
+
+	function onOpenCvError() { // eslint-disable-line no-unused-vars
+		let element = document.getElementById('status');
+		element.setAttribute('class', 'err');
+		element.innerHTML = 'Failed to load opencv.js';
+	}
+</script>
+
+<script async="" src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+</body>
+</html>
