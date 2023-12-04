@@ -162,58 +162,7 @@
 		}
 	}
 
-	imgElement.onload1 = function () {
-		let src = cv.imread(imgElement);
-		let dst = new cv.Mat();
 
-		let gray = new cv.Mat();
-		cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-		let low = new cv.Mat(gray.rows, gray.cols, gray.type(), [75, 0, 0, 0]);
-		let high = new cv.Mat(gray.rows, gray.cols, gray.type(), [255, 0, 0, 0]);
-		cv.inRange(gray, low, high, dst);
-		gray.delete(); low.delete(); high.delete();
-
-		let contours = new cv.MatVector();
-		let hierarchy = new cv.Mat();
-		// You can try more different parameters
-		cv.findContours(dst, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-		// draw bottles
-		let rectangleColor = new cv.Scalar(255, 0, 0, 255);
-		let bottleLines = new Array();
-		for (let i = 0; i < contours.size(); ++i) {
-			let rect = cv.boundingRect(contours.get(i));
-			let radio = parseFloat(rect.height) / parseFloat(rect.width);
-			if (radio > 2.5 && radio < 4.0 && rect.width > dst.cols * 0.084) {
-				let point1 = new cv.Point(rect.x, rect.y);
-				let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
-				cv.rectangle(src, point1, point2, rectangleColor, 2, cv.LINE_8);
-
-				inserted = false;
-				for (let key in bottleLines) {
-					if (bottleLines[key].append(rect)) {
-						inserted = true;
-						break;
-					}
-				}
-				if (!inserted) {
-					let bl = new BottleLine();
-					bl.append(rect);
-					bottleLines.push(bl);
-				}
-			}
-		}
-		bottleLines.sort(function (a, b) {
-			return a.possible_y - b.possible_y;
-		});
-
-		for (let key in bottleLines) {
-			for (let bottlekey in bottleLines[key].bottles) {
-
-			}
-		}
-		cv.imshow('canvasOutput', src);
-		src.delete(); dst.delete(); contours.delete(); hierarchy.delete();
-	};
 
 	function onOpenCvReady() { // eslint-disable-line no-unused-vars
 		document.getElementById('status').innerHTML = '<b>OpenCV.js is ready</b>.' +
@@ -229,6 +178,6 @@
 	}
 </script>
 
-<script async="" src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+<script async="" src="https://docs.opencv.org/3.4.16/opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
 </body>
 </html>
