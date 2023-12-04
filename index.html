@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Hello OpenCV.js</title>
+	<title>谜题大陆——美杜莎的魔法药剂辅助工具</title>
 	<style type="text/css">
 		canvas {
 			border: 1px solid black;
@@ -12,37 +12,41 @@
 			touch-action: manipulation;
 		}
 	</style>
+	
 	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 </head>
 <body>
-<h2>Hello OpenCV.js</h2>
-<p id="status">OpenCV.js is loading...</p>
+<h2>谜题大陆——美杜莎的魔法药剂辅助工具</h2>
+<p id="status">加载OpenCV中，请等待...</p>
 <div>
+   	<input type="file" id="fileInput" accept="image/png, image/jpeg" style="display: none;"/>
     <table cellpadding="0" cellspacing="0" width="0" border="0">
-    <tbody><tr>
-        <td>
-            <img id="imageSrc" alt="No Image"/>
-        </td>
+    <tbody>
+    	<tr>
         <td>
             <canvas id="canvasOutput"  class="disable-dbl-tap-zoom"></canvas>
         </td>
-    </tr>
-    <tr>
-        <td>
-            <div class="caption">imageSrc <input type="file" id="fileInput" name="file" accept="image/*"></div>
-        </td>
-		<td align="center">
-			<button type="button" class="btn btn-primary btn-sm disable-dbl-tap-zoom" style="font-size:20px" id="step" disabled>
-				<i class="fa fa-caret-right"></i> Step
-			</button>
-			<button type="button" class="btn btn-warning btn-sm disable-dbl-tap-zoom" style="font-size:20px" id="reset" disabled>
-				<i class="fa fa-undo"></i> Reset
-			</button>
-			<span id="counter"></span>
-			<p></p>
-		</td>
-    </tr>
+    	</tr>
+    	<tr>
+				<td align="center">
+					<span id="counter"></span><p></p>
+				</td>
+    	</tr>
+    	<tr>
+				<td align="center">
+        	<button type="button" id="InputButton" class="disable-dbl-tap-zoom"  style="font-size:18px">选择截屏图片</button>
+					<button type="button" class="btn btn-primary btn-sm disable-dbl-tap-zoom" style="font-size:18px" id="step" disabled>
+						<i class="fa fa-caret-right"></i> 下一步
+					</button>
+					<button type="button" class="btn btn-warning btn-sm disable-dbl-tap-zoom" style="font-size:18px" id="reset" disabled>
+						<i class="fa fa-undo"></i> 重置
+					</button>
+				</td>
+    	</tr>
     </tbody></table>
+</div>
+<div>
+	<img id="imageSrc" alt="No Image"/>
 </div>
 <div>
 	<canvas id="mask"></canvas>
@@ -57,14 +61,21 @@
 
 	let imgElement = document.getElementById('imageSrc');
 	imgElement.style.display = "none";
-//imgElement.width = window.innerWidth / 2 - 20;
 
-	let inputElement = document.getElementById('fileInput');
-	inputElement.addEventListener('change', (e) => {
+	// mask是为了debug时显示处理中间结果的一个元素
+	let mask = document.getElementById('mask');
+	mask.style.display = "none";
+
+	let inputFile = document.getElementById('fileInput');
+	//inputFile.style.opacity = 0;
+	inputFile.addEventListener('change', (e) => {
 		imgElement.width = 1080;
 		imgElement.src = URL.createObjectURL(e.target.files[0]);
 	}, false);
-
+	
+	let inputButton = document.getElementById('InputButton');
+	inputButton.onclick = (event) => {inputFile.click();};
+	
 	function ShowStatus(string) {
 		document.getElementById('status').innerHTML = string;
 	}
@@ -162,22 +173,20 @@
 		}
 	}
 
-
-
 	function onOpenCvReady() { // eslint-disable-line no-unused-vars
-		document.getElementById('status').innerHTML = '<b>OpenCV.js is ready</b>.' +
-			'You can upload an image.<br>' +
-			'The <b>imageSrc</b> is a &lt;img&gt; element used as cv.Mat input. ' +
-			'The <b>canvasOutput</b> is a &lt;canvas&gt; element used as cv.Mat output.';
+		document.getElementById('status').innerHTML = '使用方法：<br>' +
+			'1. 截屏.<br>' +
+			'2. 点击“选择文件”按钮，选择截屏保存的图像文件. <br>' +
+			'3. 若有解，点击“下一步”按钮，跟随操作.';
 	}
 
 	function onOpenCvError() { // eslint-disable-line no-unused-vars
 		let element = document.getElementById('status');
 		element.setAttribute('class', 'err');
-		element.innerHTML = 'Failed to load opencv.js';
+		element.innerHTML = '加载OpenCV失败，无法运作.';
 	}
 </script>
 
-<script async="" src="https://docs.opencv.org/3.4.16/opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+<script async="" src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
 </body>
 </html>
