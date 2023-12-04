@@ -132,6 +132,14 @@
 	let counter = document.querySelector('#counter');
 
 	const gameDisplay = new GameDisplay('canvasOutput');
+		
+	const isMobile = /(iPhone|iPad|iPod|iOS|Android|Linux armv8l|Linux armv7l|Linux aarch64)/i.test(navigator.platform);
+	let windowRadio = window.innerWidth / window.innerHeight;
+	if (isMobile)
+		document.body.style.zoom = 2;
+	else
+		document.body.style.zoom = 1;
+	
 	var orgProblem = new Object();
 	var pureMethod = new Array();
 	var pureIndex = 0;
