@@ -24,13 +24,13 @@ class GameDisplay
 
     // Set actual size in memory (scaled to account for extra pixel density).
     // Change to 1 on retina screens to see blurry canvas.
-    const scale = window.devicePixelRatio;
-    this.canvas.width = width * scale;
-    this.canvas.height = height * scale;
+    //const scale = window.devicePixelRatio;
+    this.canvas.width = width;
+    this.canvas.height = height;
 
     // Normalize coordinate system to use css pixels.
     this.ctx = this.canvas.getContext('2d');
-    this.ctx.scale(scale, scale);
+    //this.ctx.scale(scale, scale);
     // Clear previous drawing.
     this.ctx.fillStyle = 'black';
     this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -65,7 +65,7 @@ class GameDisplay
   	let bottles = problem.bottles.length;
   	if (colors.length + blanks == bottles)
   	{
-  		// 使用colors里面的颜色
+  		// 使用colors里面的颜�?
   		for (var color of colors)
   		{
   			if (color.index > BLOCK_BLANK && color.count < 4)
@@ -77,7 +77,7 @@ class GameDisplay
   	}
   	else
   	{
-  		// 原始图中的颜色数过少，不能使用colors里面的颜色，直接使用problem.cols里面的颜色
+  		// 原始图中的颜色数过少，不能使用colors里面的颜色，直接使用problem.cols里面的颜�?
   		for (var i=BLOCK_BLANK+1; i<problem.color.length; i++)
   		{
  				this.usedColor.push({'index': i, 'color': problem.color[i]});
@@ -126,7 +126,7 @@ class GameDisplay
 				ShowStatus('<b>选择颜色有误，颜色组合不符合要求，请重新选择...');
 			}
 			else {
-				ShowStatus('根据翻出的颜色重新解题，请等待......');
+				ShowStatus('根据翻出的颜色重新解题，请等�?......');
   			colorSelecting = false;
   			this.selector.style.visibility = 'hidden';
 		  	movingProblem = problem;
