@@ -46,8 +46,8 @@
     	<tr>
         <td>
         	<div style="position: relative;">        		
-            <canvas id="canvasOutput"  style="position: absolute; top: 0px; left: 0px;"></canvas>
-            <canvas id="canvasSelectColor" style="position: absolute; top: 0px; left: 0px; visibility: hidden; z-index:1"></canvas>
+            <canvas id="canvasOutput"  class="disable-dbl-tap-zoom"></canvas>
+            <canvas id="canvasSelectColor" style="position: absolute; top: 0px; left: 0px; visibility: hidden;"></canvas>
         	</div>
         </td>
     	</tr>
@@ -297,6 +297,6 @@
 	}
 </script>
 
-<script async src="https://docs.opencv.org/3.4.16/opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+<script async="" src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
 </body>
 </html>
