@@ -3,12 +3,17 @@
 class GameDisplay 
 {
 	ctx = null;
-  constructor(canvasId) 
+  constructor(canvasId, width, height, selectId) 
   {
 		this.canvas = document.getElementById(canvasId);
+		this.selector = document.getElementById(selectId);
+		this.selector.addEventListener('click', event => this.onMouseClick(event));
+		
+		//this.canvas.style.transformOrigin="0 0";
+		//this.canvas.style.transform = `scale(${this.scale}) `;
 		this.canvasSize = [];
     this.vialDimensions = []; // Populated when we call draw().
-    this.initCanvas(350, 540);
+    this.initCanvas(width, height);
   }
   
   initCanvas(width, height)
@@ -38,10 +43,108 @@ class GameDisplay
   
   init(problem)
 	{
-    [this.canvasSize, this.vialDimensions] = GameDisplay.getVialDimensions(problem.rows, problem.cols);
-    this.initCanvas(this.canvasSize[0], this.canvasSize[1]);
+    [this.vialSize, this.vialDimensions] = GameDisplay.getVialDimensions(problem.rows, problem.cols);
+    let xOff = (this.canvas.width - this.vialSize[0])/2;
+    let yOff = (this.canvas.height - this.vialSize[1])/2;
+    for (var id in this.vialDimensions)
+    {
+    	this.vialDimensions[id][0] += xOff;
+    	this.vialDimensions[id][1] += yOff;
+    }
+    //this.initCanvas(this.canvasSize[0], this.canvasSize[1]);
+    
+    //this.initSelector(problem);
   }
   
+  initSelector(problem, id, blockIdex)
+  {
+  	this.usedColor = new Array();
+  	
+  	let colors = GetColors(problem);
+  	let blanks = GetBlanks(problem) /4;
+  	let bottles = problem.bottles.length;
+  	if (colors.length + blanks == bottles)
+  	{
+  		// 使用colors里面的颜色
+  		for (var color of colors)
+  		{
+  			if (color.index > BLOCK_BLANK && color.count < 4)
+  			{
+  				
+  				this.usedColor.push({'index': color.index, 'color': problem.color[color.index]});
+  			}
+  		}		
+  	}
+  	else
+  	{
+  		// 原始图中的颜色数过少，不能使用colors里面的颜色，直接使用problem.cols里面的颜色
+  		for (var i=BLOCK_BLANK+1; i<problem.color.length; i++)
+  		{
+ 				this.usedColor.push({'index': i, 'color': problem.color[i]});
+  		}		
+  	}
+
+		if (this.usedColor.length > 3)
+			this.selector.width = 3 * 32;
+		else
+			this.selector.width = this.usedColor.length * 32;
+  	this.selector.height = 32 * Math.floor((this.usedColor.length + 2) / 3);
+
+		var x = this.vialDimensions[id][0] + (this.vialDimensions[id][2] - this.selector.width) / 2;
+		var y = this.vialDimensions[id][1] + this.vialDimensions[id][3] / 8 * ( 2 * (blockIdex + 1) + 1);
+		this.selector.style.top = `${y}px`;
+		this.selector.style.left = `${x}px`;
+		this.selector.style.visibility = 'visible';
+  	for (var i=0; i< this.usedColor.length; i++)
+  	{
+  		let x = (i % 3) * 32;
+  		let y = Math.floor(i / 3) * 32;
+  		this.fillVialSegmentRect(this.selector.getContext('2d'), x, y, x+31, y+31, this.usedColor[i].color); 
+  	}
+  }
+  
+  inWhichColor(x, y)
+	{
+		let id = Math.floor(y / 32) * 3 + Math.floor(x/32);
+		if (id < this.usedColor.length)
+			return this.usedColor[id].index;
+		else
+			return -1;
+	}
+	
+  onMouseClick(event) {
+    const x = event.offsetX;
+    const y = event.offsetY;
+    const id = this.inWhichColor(x, y);
+    if (id >= 0)
+    {
+    	let problem = clone(movingProblem);
+    	let pure = pureMethod[pureIndex-1];
+		  let bottle = problem.bottles[pure.from];
+		  bottle.setTop(id);
+		  if (!CheckProblem(problem)) {
+				ShowStatus('<b>选择颜色有误，颜色组合不符合要求，请重新选择...');
+			}
+			else {
+				ShowStatus('根据翻出的颜色重新解题，请等待......');
+  			colorSelecting = false;
+  			this.selector.style.visibility = 'hidden';
+		  	movingProblem = problem;
+		  	this.show(movingProblem);
+		  	
+		  	// 根据翻出的颜色，更新原始问题
+		  	let orgBottle = orgProblem.bottles[pure.from];
+		  	orgBottle.setColor(bottle.m_blanks, id);
+		  	orgBottle.Update();
+		  	orgProblemChanged = true;
+		  
+		  	solving = true;
+		  	handleButtonStatus();
+				requestIdleCallback(()=>{SolveProblem(movingProblem, false);});
+			}
+		}
+  }
+
   show(problem)
 	{
     // Clear previous drawing.
@@ -54,31 +157,6 @@ class GameDisplay
       this.fillSegments(x, y, width, height, problem.bottles[i], problem.color);
     }
 	}
-
-  draw(stacks_to_draw, selected) {
-    // Store the stacks as [['A', 'B' , 'C', ''], ['D', 'E', 'F', 'G'], etc..]
-    const stacks = [];
-    for (const stack of stacks_to_draw) {
-      stacks.push([...stack.padEnd(4)]);
-    }
-    if (selected === null) selected = [-1, -1];  // [stack, segment]
-
-    [this.canvasSize, this.vialDimensions] = GameDisplay.getVialDimensions(problem.rows, problem.cols);
-    for (const [i, dims] of this.vialDimensions.entries()) {
-      const [x, y, width, height] = dims;
-      const colors = [];
-      for (let j = 0; j < stacks[i].length; j++) {
-        colors.push(this.colorMap.get(stacks[i][j]));
-      }
-      // Highlight selected vial segment white.
-      const [stack, segment] = selected;
-      if (i == stack) {
-        colors[segment] = 'rgba(255, 255, 255, 1)'; // white
-      }
-      this.drawVial(x, y, width, height);
-      this.fillSegments(x, y, width, height, colors);
-    }
-  }
 
   drawVial(x, y, width, height, colors) {
     this.ctx.beginPath();
@@ -105,7 +183,7 @@ class GameDisplay
 			let yoff = (i*2+1)*dy;
 			if (color != BLOCK_UNKNOWN)
 			{
-	    	this.fillVialSegmentRect(x1, y + yoff, x2, y + yoff + 2*dy, colors[color]);
+	    	this.fillVialSegmentRect(this.ctx, x1, y + yoff, x2, y + yoff + 2*dy, colors[color]);
 	    }
 	    else
 	    {
@@ -126,15 +204,15 @@ class GameDisplay
 	    }
   }
 
-  fillVialSegmentRect(x1, y1, x2, y2, color) {
-    this.ctx.beginPath();
-    this.ctx.moveTo(x1, y1);
-    this.ctx.lineTo(x2, y1);
-    this.ctx.lineTo(x2, y2);
-    this.ctx.lineTo(x1, y2);
-    this.ctx.closePath();
-    this.ctx.fillStyle = color;
-    this.ctx.fill();
+  fillVialSegmentRect(ctx, x1, y1, x2, y2, color) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x1, y2);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
   }
 
   fillVialSegmentBottom(x1, y1, x2, y2, color) {
