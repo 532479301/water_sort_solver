@@ -45,9 +45,9 @@
     <tbody>
     	<tr>
         <td>
-        	<div>        		
-            <canvas id="canvasOutput"  class="disable-dbl-tap-zoom"></canvas>
-            <canvas id="canvasSelectColor" style="top: 0px; left: 0px; visibility: hidden;"></canvas>
+        	<div style="position: relative;">        		
+            <canvas id="canvasOutput"  style="position: absolute; top: 0px; left: 0px;"></canvas>
+            <canvas id="canvasSelectColor" style="position: absolute; top: 0px; left: 0px; visibility: hidden; z-index:1"></canvas>
         	</div>
         </td>
     	</tr>
@@ -196,10 +196,10 @@
 	
 	const isMobile = /(iPhone|iPad|iPod|iOS|Android|Linux armv8l|Linux armv7l|Linux aarch64)/i.test(navigator.platform);
 	let windowRadio = window.innerWidth / window.innerHeight;
-	//if (isMobile)
-	//	document.body.style.zoom = 2;
-	//else
-	//	document.body.style.zoom = 1;
+	if (isMobile)
+		document.body.style.zoom = 2;
+	else
+		document.body.style.zoom = 1;
 	
 	var orgProblem = new Object();
 	var orgProblemChanged = false;
