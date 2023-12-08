@@ -280,7 +280,8 @@
 			orgProblem = clone(problem);
 			orgProblemChanged = false;
 			solving = true;
-			requestIdleCallback(()=>{SolveProblem(problem, true);});
+			SolveProblem(problem, true);
+			//requestIdleCallback(()=>{SolveProblem(problem, true);});
 		}
 		handleButtonStatus();
 		src.delete();
