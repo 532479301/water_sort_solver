@@ -5,7 +5,7 @@
 	<title>谜题大陆——美杜莎的魔法药剂辅助工具</title>
 	<style type="text/css">
 		canvas {
-			border: 1px solid black;
+			border: 1px solid white;
 		}
 
 		.disable-dbl-tap-zoom {
@@ -75,13 +75,13 @@
     </tbody></table>
 </div>
 <div>
-	<img id="imageSrc" alt="No Image"/>
+	<img id="imageSrc" style="display: none;"/>
 </div>
 <div>
-	<canvas id="src"></canvas>
+	<canvas id="src" style="display: none;"></canvas>
 </div>
 <div>
-	<canvas id="mask"></canvas>
+	<canvas id="mask" style="display: none;"></canvas>
 </div>
 
 <script src="bottle.js" type="text/javascript"></script>
@@ -297,6 +297,6 @@
 	}
 </script>
 
-<script async="" src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+<script async src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
 </body>
 </html>

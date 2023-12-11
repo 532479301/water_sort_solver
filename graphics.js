@@ -56,6 +56,18 @@ class GameDisplay
     //this.initSelector(problem);
   }
   
+  getColorCount(index, colors)
+  {
+ 		for (var color of colors)
+  	{
+  		if (color.index == index)
+  		{
+  			return color.count;
+  		}
+  	}
+  	return 0;
+  }
+  
   initSelector(problem, id, blockIdex)
   {
   	this.usedColor = new Array();
@@ -65,7 +77,7 @@ class GameDisplay
   	let bottles = problem.bottles.length;
   	if (colors.length + blanks == bottles)
   	{
-  		// 使用colors里面的颜�?
+  		// 使用colors里面的颜臿
   		for (var color of colors)
   		{
   			if (color.index > BLOCK_BLANK && color.count < 4)
@@ -77,35 +89,45 @@ class GameDisplay
   	}
   	else
   	{
-  		// 原始图中的颜色数过少，不能使用colors里面的颜色，直接使用problem.cols里面的颜�?
+  		// 原始图中的颜色数过少，不能使用colors里面的颜色，直接使用problem.cols里面的颜臿
   		for (var i=BLOCK_BLANK+1; i<problem.color.length; i++)
   		{
- 				this.usedColor.push({'index': i, 'color': problem.color[i]});
+  			if (this.getColorCount(i, colors) < 4)
+				{
+					// 只显示使用不满4个的颜色
+	 				this.usedColor.push({'index': i, 'color': problem.color[i]});
+				}
   		}		
   	}
 
+		this.zoom = document.body.style.zoom;
+		this.selectorSize = 32 * this.zoom;
 		if (this.usedColor.length > 3)
-			this.selector.width = 3 * 32;
+			this.selector.width = 3 * this.selectorSize-1;
 		else
-			this.selector.width = this.usedColor.length * 32;
-  	this.selector.height = 32 * Math.floor((this.usedColor.length + 2) / 3);
+			this.selector.width = this.usedColor.length * this.selectorSize-1;
+  	this.selector.height = this.selectorSize * Math.floor((this.usedColor.length + 2) / 3) - 1;
 
 		var x = this.vialDimensions[id][0] + (this.vialDimensions[id][2] - this.selector.width) / 2;
 		var y = this.vialDimensions[id][1] + this.vialDimensions[id][3] / 8 * ( 2 * (blockIdex + 1) + 1);
 		this.selector.style.top = `${y}px`;
 		this.selector.style.left = `${x}px`;
 		this.selector.style.visibility = 'visible';
+		let ctx = this.selector.getContext('2d');
+		ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
   	for (var i=0; i< this.usedColor.length; i++)
   	{
-  		let x = (i % 3) * 32;
-  		let y = Math.floor(i / 3) * 32;
-  		this.fillVialSegmentRect(this.selector.getContext('2d'), x, y, x+31, y+31, this.usedColor[i].color); 
+  		let x = (i % 3) * this.selectorSize;
+  		let y = Math.floor(i / 3) * this.selectorSize;
+  		this.fillVialSegmentRect(this.selector.getContext('2d'), x, y, x+this.selectorSize-1, y+this.selectorSize-1, this.usedColor[i].color); 
   	}
   }
   
   inWhichColor(x, y)
 	{
-		let id = Math.floor(y / 32) * 3 + Math.floor(x/32);
+		let id = Math.floor(y / this.selectorSize) * 3 + Math.floor(x/this.selectorSize);
 		if (id < this.usedColor.length)
 			return this.usedColor[id].index;
 		else
@@ -113,8 +135,8 @@ class GameDisplay
 	}
 	
   onMouseClick(event) {
-    const x = event.offsetX;
-    const y = event.offsetY;
+    const x = event.offsetX / this.zoom;
+    const y = event.offsetY / this.zoom;
     const id = this.inWhichColor(x, y);
     if (id >= 0)
     {
@@ -126,7 +148,7 @@ class GameDisplay
 				ShowStatus('<b>选择颜色有误，颜色组合不符合要求，请重新选择...');
 			}
 			else {
-				ShowStatus('根据翻出的颜色重新解题，请等�?......');
+				ShowStatus('根据翻出的颜色重新解题，请等弿......');
   			colorSelecting = false;
   			this.selector.style.visibility = 'hidden';
 		  	movingProblem = problem;
