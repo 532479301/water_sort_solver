@@ -14,7 +14,7 @@
 	</style>
 	
 	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-	<script type="text/javascript" src="//api.tongjiniao.com/c?_=591661499739787264" async></script>
+	<!--script type="text/javascript" src="//api.tongjiniao.com/c?_=591661499739787264" async></script-->
 </head>
 <body>
 <h2>谜题大陆——美杜莎的魔法药剂辅助工具</h2>
@@ -235,9 +235,9 @@
 		}
 		else {
 			var best = FindMoreUnkonwns(problem);
-			if (best.unknowns > 0)
+			if (best.pure.length > 0)
 			{
-				ShowStatus(`可以翻出${best.unknowns}个未知块`);
+				ShowStatus(`可以翻出未知块`);
 				pureMethod = clone(best.pure);
 			}
 			else
