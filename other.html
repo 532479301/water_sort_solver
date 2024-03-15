@@ -14,156 +14,178 @@
 	</style>
 	
 	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-	<script type="text/javascript" src="//api.tongjiniao.com/c?_=591661499739787264" async></script>
+	<script type="text/javascript" src="//api.tongjiniao.com/c?_=591661499739787264" async ></script>
 </head>
 <body>
-<h2>谜题大陆——美杜莎的魔法药剂辅助工具</h2>
-<table border="0">
-	<tr>
-		<td width=310>
-			<p>使用方法：</p>
-			<li>截屏</li>
-			<li>点击“选择截屏图片”按钮，选择截屏保存的图像文件. </li>
-			<li>若有解，点击“下一步”按钮，跟随操作.</li>
-		<td>
-			<table border="0">
-				<tr><td align="center">
-					<img src="donate.png"/>					
-				</td></tr>
-				<tr><td align="center">
-					<i style="font-size:12px">支持作者请微信扫码</i>
-				</td></tr>
-			</table>
-		</td>
-	</tr>
-</table>
+	<h2>谜题大陆——美杜莎的魔法药剂辅助工具</h2>
+	<table border="0">
+		<tr>
+			<td width=310>
+				<p>使用方法：</p>
+				<li>截屏</li>
+				<li>点击“选择截屏图片”按钮，选择截屏保存的图像文件. </li>
+				<li>若有解，点击“下一步”按钮，跟随操作.</li>
+			<td>
+				<table border="0">
+					<tr>
+						<td align="center">
+							<img src="donate.png" />
+						</td>
+					</tr>
+					<tr>
+						<td align="center">
+							<i style="font-size:12px">支持作者请微信扫码</i>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
 
 
-<div>
-   	<input type="file" id="fileInput" accept="image/png, image/jpeg" style="display: none;"/>
-    <table cellpadding="0" cellspacing="0" width="0" border="0">
-    <tbody>
-    	<tr>
-        <td>
-        	<div style="position: relative;">        		
-            <canvas id="canvasOutput"  class="disable-dbl-tap-zoom"></canvas>
-            <canvas id="canvasSelectColor" style="position: absolute; top: 0px; left: 0px; visibility: hidden;"></canvas>
-        	</div>
-        </td>
-    	</tr>
-    	<tr>
-				<td align="center">
-					<p id="status">加载OpenCV中，请等待...</p></td>
-				</td>
-    	</tr>
-    	<tr>
-				<td align="center">
-					<span id="counter"></span><p></p>
-				</td>
-    	</tr>
-    	<tr>
-				<td align="center">
-        	<button type="button" id="InputButton" class="disable-dbl-tap-zoom"  style="font-size:18px">选择截屏图片</button>
-					<button type="button" class="btn btn-primary btn-sm disable-dbl-tap-zoom" style="font-size:18px" id="step" disabled>
-						<i class="fa fa-caret-right"></i> 下一步
-					</button>
-					<button type="button" class="btn btn-warning btn-sm disable-dbl-tap-zoom" style="font-size:18px" id="reset" disabled>
-						<i class="fa fa-undo"></i> 重置
-					</button>
-				</td>
-    	</tr>
-    </tbody></table>
-</div>
-<div>
-	<img id="imageSrc" style="display: none;"/>
-</div>
-<div>
-	<canvas id="src" style="display: none;"></canvas>
-</div>
-<div>
-	<canvas id="mask" style="display: none;"></canvas>
-</div>
+	<div>
+		<input type="file" id="fileInput" accept="image/png, image/jpeg" style="display: none;" />
+		<table cellpadding="0" cellspacing="0" width="0" border="0">
+			<tbody>
+				<tr>
+					<td>
+						<div style="position: relative;">
+							<canvas id="canvasOutput" class="disable-dbl-tap-zoom"></canvas>
+							<canvas id="canvasSelectColor" style="position: absolute; top: 0px; left: 0px; visibility: hidden;"></canvas>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<p id="status">加载OpenCV中，请等待...</p>
+					</td>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<span id="counter"></span><p></p>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<button type="button" id="InputButton" class="disable-dbl-tap-zoom" style="font-size:18px">选择截屏图片</button>
+						<button type="button" id="ColorOK" class="disable-dbl-tap-zoom" style="font-size:18px">开始计算</button>
+						<button type="button" class="btn btn-primary btn-sm disable-dbl-tap-zoom" style="font-size:18px" id="step" disabled>
+							<i class="fa fa-caret-right"></i> 下一步
+						</button>
+						<button type="button" class="btn btn-warning btn-sm disable-dbl-tap-zoom" style="font-size:18px" id="reset" disabled>
+							<i class="fa fa-undo"></i> 重置
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<img id="imageSrc" style="display: none;" />
+	</div>
+	<div>
+		<canvas id="src" style="display: none;"></canvas>
+	</div>
+	<div>
+		<canvas id="mask" style="display: none;"></canvas>
+	</div>
 
-<script src="bottle.js" type="text/javascript"></script>
-<script type="text/javascript">var solver = new Object();</script>
-<script src="mitidalu.js" type="text/javascript"></script>
-<script src="graphics.js" type="text/javascript"></script>
+	<script src="bottle.js" type="text/javascript"></script>
+	<script type="text/javascript">var solver = new Object();</script>
+	<script src="mitidalu.js" type="text/javascript"></script>
+	<script src="graphics.js" type="text/javascript"></script>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 
-	let imgElement = document.getElementById('imageSrc');
-	imgElement.style.display = "none";
+		let imgElement = document.getElementById('imageSrc');
+		imgElement.style.display = "none";
 
-	// src是为了debug时显示处理中间结果的一个元素
-	let srcImg = document.getElementById('src');
-	srcImg.style.display = "none";
+		// src是为了debug时显示处理中间结果的一个元素
+		let srcImg = document.getElementById('src');
+		srcImg.style.display = "none";
 
-	// mask是为了debug时显示处理中间结果的一个元素
-	let mask = document.getElementById('mask');
-	mask.style.display = "none";
+		// mask是为了debug时显示处理中间结果的一个元素
+		let mask = document.getElementById('mask');
+		mask.style.display = "none";
 
-	let inputFile = document.getElementById('fileInput');
-	//inputFile.style.opacity = 0;
-	inputFile.addEventListener('change', (e) => {
-		//imgElement.width = 1080;
-		imgElement.src = URL.createObjectURL(e.target.files[0]);
-	}, false);
-	
-	let inputButton = document.getElementById('InputButton');
-	inputButton.onclick = (event) => {inputFile.click();};
-	
-	function ShowStatus(string) {
-		document.getElementById('status').innerHTML = string;
-	}
+		let inputFile = document.getElementById('fileInput');
+		//inputFile.style.opacity = 0;
+		inputFile.addEventListener('change', (e) => {
+			//imgElement.width = 1080;
+			imgElement.src = URL.createObjectURL(e.target.files[0]);
+		}, false);
 
-    var movingProblem = new Object();
-	function onStepButtonPress() {
-		let pure = pureMethod[pureIndex];
-		movingProblem.bottles[pure.from].pureTo(movingProblem.bottles[pure.to]);
-		gameDisplay.show(movingProblem);
-    pureIndex++;
-    if (movingProblem.bottles[pure.from].m_top == BLOCK_UNKNOWN)
-    {
-    	// 露出了一个未知块，请用户选择颜色
-    	colorSelecting = true;
-    	gameDisplay.initSelector(movingProblem, pure.from, movingProblem.bottles[pure.from].m_blanks);
-    }
-		handleButtonStatus();
-	}
+		let inputButton = document.getElementById('InputButton');
+		inputButton.onclick = (event) => { inputFile.click(); };
 
-	function onResetButtonPress() {
-		if (orgProblemChanged) {
-     	// 翻出了新块，需要重新开始计算
-      var problem = clone(orgProblem);
-			orgProblemChanged = false;
-			solving = true;
-			colorSelecting = false;
-			pureMethod = new Array();
-			pureIndex = 0;
-			ShowStatus('解题中，请等待......');
-   		counter.innerHTML = '';
-			requestIdleCallback(()=>{SolveProblem(problem, true);});
+		function ShowStatus(string) {
+			document.getElementById('status').innerHTML = string;
 		}
-		else if (pureMethod.length > 0) {
-			movingProblem = clone(orgProblem);
-			pureIndex = 0;
+
+		let status = { nowork: 0, correctColor: 1, solving: 2, solved : 3, selectColor: 3, noResult : 4 };
+		let currentStatus = status.nowork;
+
+		var movingProblem = new Object();
+		function onStepButtonPress() {
+			let pure = pureMethod[pureIndex];
+			movingProblem.bottles[pure.from].pureTo(movingProblem.bottles[pure.to]);
+			gameDisplay.show(movingProblem);
+			pureIndex++;
+			if (movingProblem.bottles[pure.from].m_top == BLOCK_UNKNOWN) {
+				// 露出了一个未知块，请用户选择颜色
+				colorSelecting = true;
+				gameDisplay.initSelector(movingProblem, pure.from, movingProblem.bottles[pure.from].m_blanks);
+			}
+			handleButtonStatus();
 		}
-		gameDisplay.show(orgProblem);
-    handleButtonStatus();
-	}
 
-  function handleButtonStatus() {
-		// Default to disabled, then enable.
-  	stepButton.disabled = true;
-    resetButton.disabled = true;
+		function onResetButtonPress() {
+			if (orgProblemChanged) {
+				// 翻出了新块，需要重新开始计算
+				var problem = clone(orgProblem);
+				orgProblemChanged = false;
+				solving = true;
+				colorSelecting = false;
+				pureMethod = new Array();
+				pureIndex = 0;
+				ShowStatus('解题中，请等待......');
+				counter.innerHTML = '';
+				requestIdleCallback(() => { SolveProblem(problem, true); });
+			}
+			else if (pureMethod.length > 0) {
+				movingProblem = clone(orgProblem);
+				pureIndex = 0;
+			}
+			gameDisplay.show(orgProblem);
+			handleButtonStatus();
+		}
 
-		if (!solving) {
-		  if (pureMethod.length > 0) {
-      	const index = pureIndex;
-      	const numSolutionSteps = pureMethod.length.toString();
-        counter.innerHTML = ` ${index}/${numSolutionSteps}`;
-        
-        if (!colorSelecting){
+		function handleButtonStatus() {
+			switch (currentStatus) {
+				case status.correctColor:
+					colorButton.disabled = false;
+					stepButton.disabled = true;
+					resetButton.disabled = true;
+					return;
+
+				case status.solving:
+					colorButton.disabled = true;
+					stepButton.disabled = true;
+					resetButton.disabled = true;
+					return;
+			}
+
+			colorButton.disabled = true;
+			stepButton.disabled = true;
+			resetButton.disabled = true;
+
+			if (pureMethod.length > 0) {
+				const index = pureIndex;
+				const numSolutionSteps = pureMethod.length.toString();
+				counter.innerHTML = ` ${index}/${numSolutionSteps}`;
+
+				if (!colorSelecting) {
 					if (pureIndex < pureMethod.length) {
 						stepButton.disabled = false;
 						if (pureIndex > 0) {
@@ -171,132 +193,155 @@
 						}
 					}
 					else {
-        		resetButton.disabled = false;
-      		}
+						resetButton.disabled = false;
+					}
 				}
-      } else {
-      	if (orgProblemChanged) {
-        		resetButton.disabled = false;
-		        counter.innerHTML = '有翻出的新色块，请按“重置”按钮重新计算';
-      	}
-				else {   		
-       		counter.innerHTML = '问题无解';
+			} else {
+				if (orgProblemChanged) {
+					resetButton.disabled = false;
+					counter.innerHTML = '有翻出的新色块，请按“重置”按钮重新计算';
 				}
-      }
-    }
-	}
-	
-	let stepButton = document.getElementById('step');
-	stepButton.addEventListener('click', onStepButtonPress);
-	let resetButton = document.getElementById('reset');
-	resetButton.addEventListener('click', onResetButtonPress);
-	let counter = document.querySelector('#counter');
+				else {
+					counter.innerHTML = '问题无解';
+				}
+			}
+		}
 
-	const gameDisplay = new GameDisplay('canvasOutput', 450, 580, 'canvasSelectColor');
-	
-	const isMobile = /(iPhone|iPad|iPod|iOS|Android|Linux armv8l|Linux armv7l|Linux aarch64)/i.test(navigator.platform);
-	let windowRadio = window.innerWidth / window.innerHeight;
-	if (isMobile)
-		document.body.style.zoom = 2;
-	else
-		document.body.style.zoom = 1;
-	
-	var orgProblem = new Object();
-	var orgProblemChanged = false;
-	var solving = false;
-	var colorSelecting = false;
-	var pureMethod = new Array();
-	var pureIndex = 0;
+		let colorButton = document.getElementById('ColorOK');
+		colorButton.addEventListener('click', onColorButtonPress);
+		let stepButton = document.getElementById('step');
+		stepButton.addEventListener('click', onStepButtonPress);
+		let resetButton = document.getElementById('reset');
+		resetButton.addEventListener('click', onResetButtonPress);
+		let counter = document.querySelector('#counter');
 
-	function InitState()
-	{
-		orgProblem = new Object();
-		orgProblemChanged = false;
-		solving = false;
-		colorSelecting = false;
-		pureMethod = new Array();
-		pureIndex = 0;
-	}
-	
-	function SolveProblem(problem, needReset)
-	{
-		// 解题
-		let unknowns = GetUnknowns(problem);
-		if (unknowns == 0) {
-			var pure = Solve(problem);
-			if (pure == null) {
-				ShowStatus('找不到解决方案，问题无解!');
-				pureMethod = new Array();
+		const gameDisplay = new GameDisplay('canvasOutput', 450, 580, 'canvasSelectColor');
+
+		const isMobile = /(iPhone|iPad|iPod|iOS|Android|Linux armv8l|Linux armv7l|Linux aarch64)/i.test(navigator.platform);
+		let windowRadio = window.innerWidth / window.innerHeight;
+		if (isMobile)
+			document.body.style.zoom = 2;
+		else
+			document.body.style.zoom = 1;
+
+		var orgProblem = new Object();
+		var orgProblemChanged = false;
+		var solving = false;
+		var colorSelecting = false;
+		var pureMethod = new Array();
+		var pureIndex = 0;
+
+		function InitState() {
+			orgProblem = new Object();
+			currentStatus = status.nowork;
+			orgProblemChanged = false;
+			solving = false;
+			colorSelecting = false;
+			pureMethod = new Array();
+			pureIndex = 0;
+		}
+
+		function SolveProblem(problem, needReset) {
+			// 解题
+			let unknowns = GetUnknowns(problem);
+			if (unknowns == 0) {
+				var pure = Solve(problem);
+				if (pure == null) {
+					ShowStatus('找不到解决方案，问题无解!');
+					pureMethod = new Array();
+					currentStatus = status.noResult;
+				}
+				else {
+					ShowStatus('找到解决方案，请点“下一步”按钮跟随操作');
+					currentStatus = status.solved;
+					pureMethod = clone(pure);
+				}
 			}
 			else {
-				ShowStatus('找到解决方案，请点“下一步”按钮跟随操作');
-				pureMethod = clone(pure);
+				var best = FindMoreUnkonwns(problem);
+				if (best.pure.length > 0) {
+					ShowStatus(`可以翻出未知块`);
+					currentStatus = status.solved;
+					pureMethod = clone(best.pure);
+				}
+				else {
+					ShowStatus('无法翻出任何一个未知块');
+					currentStatus = status.noResult;
+					pureMethod = new Array();
+				}
+			}
+			solving = false;
+			if (needReset)
+				onResetButtonPress();
+			else {
+				pureIndex = 0;
+				handleButtonStatus();
 			}
 		}
-		else {
-			var best = FindMoreUnkonwns(problem);
-			if (best.pure.length > 0)
-			{
-				ShowStatus(`可以翻出未知块`);
-				pureMethod = clone(best.pure);
-			}
-			else
-			{
-				ShowStatus('无法翻出任何一个未知块');
-				pureMethod = new Array();
-			}
-		}
-		solving = false;
-		if (needReset)
-			onResetButtonPress();
-		else {
-			pureIndex = 0;
+
+		imgElement.onload = function () {
+			let src = cv.imread(imgElement);
+            orgProblem = solver.init(src);
+
+            gameDisplay.init(orgProblem);
+            gameDisplay.show(orgProblem);
+
+			currentStatus = status.correctColor;
+            gameDisplay.onColorChanged = (bottleId, blockId, color) => {
+                orgProblem.bottles[bottleId].setColor(blockId, color);
+                gameDisplay.show(orgProblem);
+            }
+			gameDisplay.enableCorrectColor(true, orgProblem.color);
+			ShowStatus('请检查识别的颜色是否正确，可点击不正确的块修改颜色，<br>确认正确后点击“开始计算”按钮');
+            counter.innerHTML = '';
 			handleButtonStatus();
 		}
-			
-	}
 
-	imgElement.onload = function () {
-		let src = cv.imread(imgElement);
-		let problem = solver.init(src);
+		function onColorButtonPress() {
+			// 检查
+            if (!CheckProblem(orgProblem)) {
+				ShowStatus('<b>瓶子组合不符合要求，无法解题！请检查颜色组合并修改</b>');
+				//cv.imshow('src', src);
+				//srcImg.style.display = "block";
+				//mask.style.display = "block";
+				//InitState();
+			}
+			else {
+				ShowStatus('解题中，请等待......');
+				counter.innerHTML = '';
+				srcImg.style.display = "none";
+				mask.style.display = "none";
 
-		gameDisplay.init(problem);
-		gameDisplay.show(problem);
+				orgProblemChanged = false;
+				solving = true;
+				currentStatus = status.solving;
+                gameDisplay.enableCorrectColor(false);
 
-		// 检查
-		if (!CheckProblem(problem)) {
-			ShowStatus('<b>瓶子组合不符合要求，无法解题！</b>');
-			cv.imshow('src', src);
-			srcImg.style.display = "block";
-			mask.style.display = "block";
-			InitState();
+				requestIdleCallback(() => {
+					try {
+						SolveProblem(clone(orgProblem), true);
+					}
+					catch (err) {
+						ShowStatus('搜索时出错：' + err.toString());
+                    }
+				});
+			}
+			handleButtonStatus();
+			//src.delete();
 		}
-		else {
-			ShowStatus('解题中，请等待......');
-   		counter.innerHTML = '';
-			srcImg.style.display = "none";
-			mask.style.display = "none";
 
-			orgProblem = clone(problem);
-			orgProblemChanged = false;
-			solving = true;
-			requestIdleCallback(()=>{SolveProblem(problem, true);});
+		function onOpenCvReady() { // eslint-disable-line no-unused-vars
+			document.getElementById('status').innerHTML = '请选择截屏图片';
 		}
-		handleButtonStatus();
-		src.delete();
-	}
 
-	function onOpenCvReady() { // eslint-disable-line no-unused-vars
-		document.getElementById('status').innerHTML = '请选择截屏图片';
-	}
+		function onOpenCvError() { // eslint-disable-line no-unused-vars
+			let element = document.getElementById('status');
+			element.setAttribute('class', 'err');
+			element.innerHTML = '加载OpenCV失败，无法运作.';
+		}
+	</script>
 
-	function onOpenCvError() { // eslint-disable-line no-unused-vars
-		let element = document.getElementById('status');
-		element.setAttribute('class', 'err');
-		element.innerHTML = '加载OpenCV失败，无法运作.';
-	}
-</script>
-
-<script async src="https://docs.opencv.org/3.4.16/opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+	<!--script async src="https://docs.opencv.org/3.4.16/opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script-->
+	<script async src="opencv.js" type="text/javascript" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
 </body>
 </html>
